@@ -30,8 +30,9 @@ class MealsScreen extends StatelessWidget {
             )
           : LayoutBuilder(
               builder: (context, constraints) {
-                int crossAxisCount = constraints.maxWidth ~/
-                    400; // calculate the number of items in a row
+                int crossAxisCount = (constraints.maxWidth ~/ 400)
+                    .clamp(1, double.infinity)
+                    .toInt();
                 return GridView.builder(
                   padding: const EdgeInsets.all(16),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
