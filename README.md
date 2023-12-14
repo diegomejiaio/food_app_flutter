@@ -14,3 +14,10 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Architecture
+
+Here is a preview of the architecture of the food_categories_app:
+
+![Architecture](architecture.excalidraw)
+

@@ -4,29 +4,41 @@ import 'package:food_categories_app/widgets/meal_item.dart';
 import 'package:food_categories_app/screens/meal_item_details.dart';
 
 class MealsScreen extends StatelessWidget {
-  const MealsScreen({super.key, required this.title, required this.meals});
+  const MealsScreen({
+    super.key,
+    this.title,
+    required this.meals,
+    required this.updateFavoriteStatus,
+  });
 
-  static const routeName = '/meals';
+  final void Function(Meal meal) updateFavoriteStatus;
 
   void _selectMeal(BuildContext context, Meal meal) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => MealItemDetails(
+      builder: (ctx) => MealItemDetails(
         meal: meal,
+        updateFavoriteStatus: updateFavoriteStatus,
       ),
     ));
   }
 
-  final String title;
+  final String? title;
   final List<Meal> meals;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Current category: $title'),
-      ),
+      appBar: title != null
+          ? AppBar(title: Text('Current category: $title'))
+          : null,
       body: meals.isEmpty
-          ? const Center(
-              child: Text('No meals found'),
+          ? Center(
+              child: Text(
+                'No items found.',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+                textAlign: TextAlign.center,
+              ),
             )
           : LayoutBuilder(
               builder: (context, constraints) {

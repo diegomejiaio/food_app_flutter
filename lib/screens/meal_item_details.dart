@@ -5,17 +5,30 @@ class MealItemDetails extends StatelessWidget {
   const MealItemDetails({
     super.key,
     required this.meal,
+    required this.updateFavoriteStatus,
   });
 
   final Meal meal;
 
-  static const routeName = '/meal_details';
+  final void Function(Meal meal) updateFavoriteStatus;
 
   @override
   Widget build(BuildContext context) {
+    Icon mealIcon = meal.isFavorite
+        ? const Icon(Icons.star)
+        : const Icon(Icons.star_border);
+
     return Scaffold(
         appBar: AppBar(
           title: Text(meal.title),
+          actions: [
+            IconButton(
+              onPressed: () {
+                updateFavoriteStatus(meal);
+              },
+              icon: mealIcon,
+            ),
+          ],
         ),
         body: Center(
           child: ListView(
