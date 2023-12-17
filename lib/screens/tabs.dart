@@ -6,6 +6,13 @@ import '../models/meal.dart';
 import '../widgets/main_drawer.dart';
 import 'filters.dart';
 
+const kInitialFilters = {
+  Filter.glutenFree: false,
+  Filter.lactoseFree: false,
+  Filter.vegan: false,
+  Filter.vegetarian: false,
+};
+
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
   @override
@@ -16,6 +23,7 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   int _selectedTab = 0;
+  Map<Filter, bool> _selectedFilters = kInitialFilters;
 
   void _updateFavoriteStatus(Meal meal) {
     setState(() {
@@ -31,29 +39,51 @@ class _TabsScreenState extends State<TabsScreen> {
     });
   }
 
-  void _selectDrawerOption(String identifier) {
+  void _selectDrawerOption(String identifier) async {
     Navigator.pop(context);
     if (identifier == 'meals') {
       setState(() {
         _selectedTab = 0;
       });
     } else if (identifier == 'filters') {
-      setState(() {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (ctx) => const FilterScreen(),
-        ));
-      });
+      final result = await Navigator.of(context).push<Map<Filter, bool>>(
+        MaterialPageRoute(
+          builder: (ctx) => FilterScreen(currentFilters: _selectedFilters),
+        ),
+      );
+      if (result != null) {
+        setState(() {
+          _selectedFilters = result;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final avilableMeals = dummyMeals.where((meal) {
+      if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      return true;
+    }).toList();
+
     Widget activePage = CategoriesScreen(
       updateFavoriteStatus: _updateFavoriteStatus,
+      availableMeals: avilableMeals,
     );
     if (_selectedTab == 1) {
       activePage = MealsScreen(
-        meals: dummyMeals.where((meal) => meal.isFavorite).toList(),
+        meals: avilableMeals.where((meal) => meal.isFavorite).toList(),
         updateFavoriteStatus: _updateFavoriteStatus,
       );
     }
