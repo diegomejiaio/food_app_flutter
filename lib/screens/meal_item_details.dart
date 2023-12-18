@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import '/models/meal.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/favorites_provider.dart';
 
-class MealItemDetails extends StatelessWidget {
+class MealItemDetails extends ConsumerWidget {
   const MealItemDetails({
     super.key,
     required this.meal,
-    required this.updateFavoriteStatus,
   });
 
   final Meal meal;
 
-  final void Function(Meal meal) updateFavoriteStatus;
-
   @override
-  Widget build(BuildContext context) {
-    Icon mealIcon = meal.isFavorite
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteMeals = ref.watch(favoriteMealsProvider);
+    Icon mealIcon = favoriteMeals.contains(meal)
         ? const Icon(Icons.star)
         : const Icon(Icons.star_border);
 
@@ -24,7 +24,9 @@ class MealItemDetails extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {
-                updateFavoriteStatus(meal);
+                ref
+                    .read(favoriteMealsProvider.notifier)
+                    .toggleFavoriteStatus(meal);
               },
               icon: mealIcon,
             ),

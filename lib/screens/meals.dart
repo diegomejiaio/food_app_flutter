@@ -8,16 +8,12 @@ class MealsScreen extends StatelessWidget {
     super.key,
     this.title,
     required this.meals,
-    required this.updateFavoriteStatus,
   });
-
-  final void Function(Meal meal) updateFavoriteStatus;
 
   void _selectMeal(BuildContext context, Meal meal) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (ctx) => MealItemDetails(
         meal: meal,
-        updateFavoriteStatus: updateFavoriteStatus,
       ),
     ));
   }
