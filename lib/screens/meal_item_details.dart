@@ -14,9 +14,7 @@ class MealItemDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favoriteMeals = ref.watch(favoriteMealsProvider);
-    Icon mealIcon = favoriteMeals.contains(meal)
-        ? const Icon(Icons.star)
-        : const Icon(Icons.star_border);
+    var isFavorite = favoriteMeals.contains(meal);
 
     return Scaffold(
         appBar: AppBar(
@@ -25,21 +23,34 @@ class MealItemDetails extends ConsumerWidget {
             IconButton(
               onPressed: () {
                 ref
-                    .read(favoriteMealsProvider.notifier)
+                    .watch(favoriteMealsProvider.notifier)
                     .toggleFavoriteStatus(meal);
               },
-              icon: mealIcon,
+              icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 350),
+                transitionBuilder: (child, animation) => RotationTransition(
+                  turns: animation,
+                  child: child,
+                ),
+                child: Icon(
+                  isFavorite ? Icons.star : Icons.star_border,
+                  key: ValueKey(isFavorite),
+                ),
+              ),
             ),
           ],
         ),
         body: Center(
           child: ListView(
             children: [
-              Image.network(
-                meal.imageUrl,
-                width: double.infinity,
-                height: 300,
-                fit: BoxFit.cover,
+              Hero(
+                tag: meal.id,
+                child: Image.network(
+                  meal.imageUrl,
+                  width: double.infinity,
+                  height: 300,
+                  fit: BoxFit.cover,
+                ),
               ),
               const SizedBox(height: 16),
               Center(
